@@ -11,7 +11,7 @@ const team = [];
 let teamName;
 
 // Questions for Inquirer
-const team = {
+const pageName = {
     type: 'input',
     name: 'title', 
     message: 'What is the team or project name?'
@@ -66,3 +66,81 @@ const internQuestions = {
     name: 'school',
     message: 'What school does the intern currently attend?'
 };
+
+function writeToFile(fileName, data) {
+    fs.writeFile(fileName, data, (error) =>
+    error ? console.error(error) : console.log('Success')
+    );
+};
+
+function init() {
+    inquirer 
+        .prompt(pageName)
+        .then((pageName) => {
+            pagenameResult = pageName;
+            teamAdd();
+            return pagenameResult;
+        });
+}
+
+
+
+function teamAdd() {
+    inquirer
+        .prompt(newMember)
+        .then((newMember) => {
+            if(newMember.newMember === 'Yes') {
+                inquirer
+                    .prompt(questions)
+                    .then((questionResponse) => {
+                        return roleSelected(questionResponse);
+                    });
+            }
+            else if (newMember.newMember === 'No') {
+                let packagedData = {
+                    title: pagenameResult,
+                    team: team
+                }
+                writeToFile('./dist/index.html', generateHTML(packagedData));
+            }
+        });
+};
+
+function roleSelected(passData) {
+    inquirer   
+        .prompt(rolo)
+        .then((role) => {
+            if (role.role == 'Manager'){
+                inquirer
+                    .prompt(managerQuestions)
+                    .then((managerQuestions) => {
+                        createManager(passData, managerQuestions);
+                        const newManager = createManager(passData, managerQuestions)
+                        team.push(newManager);
+                        return teamAdd();
+                    });
+            } 
+            else if (role.role == 'Engineer') {
+                inquirer
+                    .prompt(engineerQuestions)
+                    .then((engineerQuestions) => {
+                        createEngineer(passData, engineerQuestions);
+                        const newEngineer = createEngineer(passData, engineerQuestions)
+                        team.push(newEngineer);
+                        return teamAdd();
+                    });
+            }
+            else if (role.role == 'Intern'){
+                inquirer
+                    .prompt(internQuestions)
+                    .then((internQuestions) => {
+                        createIntern(passData, internQuestions);
+                        const newIntern = createIntern(passData, internQuestions)
+                        team.push(newIntern);
+                        return teamAdd();
+                    });
+            }   
+    });
+};
+
+
