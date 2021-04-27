@@ -84,7 +84,6 @@ function init() {
 }
 
 
-
 function teamAdd() {
     inquirer
         .prompt(newMember)
@@ -108,7 +107,7 @@ function teamAdd() {
 
 function roleSelected(passData) {
     inquirer   
-        .prompt(rolo)
+        .prompt(role)
         .then((role) => {
             if (role.role == 'Manager'){
                 inquirer
@@ -117,6 +116,16 @@ function roleSelected(passData) {
                         createManager(passData, managerQuestions);
                         const newManager = createManager(passData, managerQuestions)
                         team.push(newManager);
+                        return teamAdd();
+                    });
+            } 
+            else if (role.role == 'Intern'){
+                inquirer
+                    .prompt(internQuestions)
+                    .then((internQuestions) => {
+                        createIntern(passData, internQuestions);
+                        const newIntern = createIntern(passData, internQuestions)
+                        team.push(newIntern);
                         return teamAdd();
                     });
             } 
@@ -130,17 +139,9 @@ function roleSelected(passData) {
                         return teamAdd();
                     });
             }
-            else if (role.role == 'Intern'){
-                inquirer
-                    .prompt(internQuestions)
-                    .then((internQuestions) => {
-                        createIntern(passData, internQuestions);
-                        const newIntern = createIntern(passData, internQuestions)
-                        team.push(newIntern);
-                        return teamAdd();
-                    });
-            }   
+              
     });
 };
 
 
+init();
