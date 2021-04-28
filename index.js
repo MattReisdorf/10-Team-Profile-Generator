@@ -8,7 +8,7 @@ const createIntern = require('./lib/intern');
 
 // Initialize some Variables
 const team = [];
-let teamName;
+
 
 // Questions for Inquirer
 const pageName = {
@@ -73,18 +73,18 @@ function writeToFile(fileName, data) {
     );
 };
 
-function init() {
+function init(team) {
     inquirer 
         .prompt(pageName)
         .then((pageName) => {
-            pagenameResult = pageName;
-            teamAdd();
-            return pagenameResult;
+            const pagenameResult = pageName.title;
+            console.log(pagenameResult, 'im on line 82');
+            teamAdd(pagenameResult, team);
         });
 }
 
 
-function teamAdd() {
+function teamAdd(pagenameResult, team) {
     inquirer
         .prompt(newMember)
         .then((newMember) => {
@@ -92,7 +92,7 @@ function teamAdd() {
                 inquirer
                     .prompt(questions)
                     .then((questionResponse) => {
-                        return roleSelected(questionResponse);
+                        return roleSelected(pagenameResult, questionResponse);
                     });
             }
             else if (newMember.newMember === 'No') {
@@ -105,7 +105,7 @@ function teamAdd() {
         });
 };
 
-function roleSelected(passData) {
+function roleSelected(pagenameResult, passData) {
     inquirer   
         .prompt(role)
         .then((role) => {
@@ -113,30 +113,27 @@ function roleSelected(passData) {
                 inquirer
                     .prompt(managerQuestions)
                     .then((managerQuestions) => {
-                        createManager(passData, managerQuestions);
-                        const newManager = createManager(passData, managerQuestions)
+                        const newManager = createManager.createManager(passData, managerQuestions)
                         team.push(newManager);
-                        return teamAdd();
+                        return teamAdd(pagenameResult, team);
                     });
             } 
             else if (role.role == 'Intern'){
                 inquirer
                     .prompt(internQuestions)
                     .then((internQuestions) => {
-                        createIntern(passData, internQuestions);
-                        const newIntern = createIntern(passData, internQuestions)
+                        const newIntern = createIntern.createIntern(passData, internQuestions)
                         team.push(newIntern);
-                        return teamAdd();
+                        return teamAdd(pagenameResult, team);
                     });
             } 
             else if (role.role == 'Engineer') {
                 inquirer
                     .prompt(engineerQuestions)
                     .then((engineerQuestions) => {
-                        createEngineer(passData, engineerQuestions);
-                        const newEngineer = createEngineer(passData, engineerQuestions)
+                        const newEngineer = createEngineer.createEngineer(passData, engineerQuestions)
                         team.push(newEngineer);
-                        return teamAdd();
+                        return teamAdd(pagenameResult, team);
                     });
             }
               
@@ -144,4 +141,4 @@ function roleSelected(passData) {
 };
 
 
-init();
+init(team);
